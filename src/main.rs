@@ -6,6 +6,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .init_gizmo_group::<MyRoundGizmos>()
         .add_systems(Startup, setup)
+        .add_systems(Update, rotate_camera)
         .run();
 }
 
@@ -68,4 +69,10 @@ fn setup(
             ..default()
         }),
     );
+}
+
+fn rotate_camera(mut query: Query<&mut Transform, With<Camera>>, time: Res<Time>) {
+    let mut transform = query.single_mut();
+
+    transform.rotate_around(Vec3::ZERO, Quat::from_rotation_y(time.delta_seconds() / 2.));
 }
