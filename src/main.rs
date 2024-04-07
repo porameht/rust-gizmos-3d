@@ -93,4 +93,6 @@ fn draw_example_colletion(
         Vec2::splat(2.),
         Color::GREEN,
     );
+
+    my_gizmos.sphere(Vec3::new(1., 0.5, 0.), Quat::IDENTITY, 0.5, Color::RED);
 }
