@@ -103,4 +103,26 @@ fn draw_example_colletion(
             Color::BLUE,
         );
     }
+
+    my_gizmos
+        .arc_3d(
+            180.0_f32.to_radians(),
+            0.2,
+            Vec3::ONE,
+            Quat::from_rotation_arc(Vec3::Y, Vec3::ONE.normalize()),
+            Color::ORANGE,
+        )
+        .segments(10);
+
+    my_gizmos.circle(Vec3::ZERO, Direction3d::Y, 3., Color::BLACK);
+
+    my_gizmos
+        .circle(Vec3::ZERO, Direction3d::Y, 3.1, Color::NAVY)
+        .segments(64);
+
+    my_gizmos
+        .sphere(Vec3::ZERO, Quat::IDENTITY, 3.2, Color::BLACK)
+        .circle_segments(64);
+
+    gizmos.arrow(Vec3::ZERO, Vec3::ONE * 1.5, Color::YELLOW);
 }
