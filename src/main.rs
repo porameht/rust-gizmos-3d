@@ -7,6 +7,7 @@ fn main() {
         .init_gizmo_group::<MyRoundGizmos>()
         .add_systems(Startup, setup)
         .add_systems(Update, rotate_camera)
+        .add_systems(Update, (draw_example_colletion))
         .run();
 }
 
@@ -75,4 +76,21 @@ fn rotate_camera(mut query: Query<&mut Transform, With<Camera>>, time: Res<Time>
     let mut transform = query.single_mut();
 
     transform.rotate_around(Vec3::ZERO, Quat::from_rotation_y(time.delta_seconds() / 2.));
+}
+
+fn draw_example_colletion(
+    mut gizmos: Gizmos,
+    mut my_gizmos: Gizmos<MyRoundGizmos>,
+    time: Res<Time>,
+) {
+    gizmos.cuboid(
+        Transform::from_translation(Vec3::Y * 0.5).with_scale(Vec3::splat(1.25)),
+        Color::BLACK,
+    );
+    gizmos.rect(
+        Vec3::new(time.elapsed_seconds().cos() * 2.5, 1., 0.),
+        Quat::from_rotation_y(PI / 2.),
+        Vec2::splat(2.),
+        Color::GREEN,
+    );
 }
