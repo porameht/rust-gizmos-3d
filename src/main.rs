@@ -95,4 +95,12 @@ fn draw_example_colletion(
     );
 
     my_gizmos.sphere(Vec3::new(1., 0.5, 0.), Quat::IDENTITY, 0.5, Color::RED);
+
+    for y in [0., 0.5, 1.] {
+        gizmos.ray(
+            Vec3::new(1., y, 0.),
+            Vec3::new(-3., (time.elapsed_seconds() * 3.).sin(), 0.),
+            Color::BLUE,
+        );
+    }
 }
