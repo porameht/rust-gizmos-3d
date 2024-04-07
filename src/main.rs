@@ -7,7 +7,7 @@ fn main() {
         .init_gizmo_group::<MyRoundGizmos>()
         .add_systems(Startup, setup)
         .add_systems(Update, rotate_camera)
-        .add_systems(Update, (draw_example_colletion))
+        .add_systems(Update, (draw_example_colletion, update_config))
         .run();
 }
 
@@ -56,8 +56,7 @@ fn setup(
                         Hold 'Up' or 'Down' to change the line width of round gizmos\n\
                         Press '1' or '2' to toggle the visibility of straight gizmos or round gizmos\n\
                         Press 'A' to show all AABB boxes\n\
-                        Press 'K' or 'J' to cycle through primitives rendered with gizmos\n\
-                        Press 'H' or 'L' to decrease/increase the amount of segments in the primitives",
+                        ",
             TextStyle {
                 font_size: 20.,
                 ..default()
@@ -125,4 +124,52 @@ fn draw_example_colletion(
         .circle_segments(64);
 
     gizmos.arrow(Vec3::ZERO, Vec3::ONE * 1.5, Color::YELLOW);
+}
+
+fn update_config(
+    mut config_store: ResMut<GizmoConfigStore>,
+    keyboard: Res<ButtonInput<KeyCode>>,
+    time: Res<Time>,
+) {
+    if keyboard.just_pressed(KeyCode::KeyD) {
+        for (_, config, _) in config_store.iter_mut() {
+            config.depth_bias = if config.depth_bias == 0. { -1. } else { 0. };
+        }
+    }
+    if keyboard.just_pressed(KeyCode::KeyP) {
+        for (_, config, _) in config_store.iter_mut() {
+            config.line_perspective ^= true;
+            config.line_width *= if config.line_perspective { 5. } else { 1. / 5. };
+        }
+    }
+
+    let (config, _) = config_store.config_mut::<DefaultGizmoConfigGroup>();
+    if keyboard.pressed(KeyCode::ArrowRight) {
+        config.line_width += 5. * time.delta_seconds();
+        config.line_width = config.line_width.clamp(0., 50.);
+    }
+    if keyboard.pressed(KeyCode::ArrowLeft) {
+        config.line_width -= 5. * time.delta_seconds();
+        config.line_width = config.line_width.clamp(0., 50.);
+    }
+    if keyboard.just_pressed(KeyCode::Digit1) {
+        config.enabled ^= true;
+    }
+
+    let (my_config, _) = config_store.config_mut::<MyRoundGizmos>();
+    if keyboard.pressed(KeyCode::ArrowUp) {
+        my_config.line_width += 5. * time.delta_seconds();
+        my_config.line_width = my_config.line_width.clamp(0., 50.);
+    }
+    if keyboard.pressed(KeyCode::ArrowDown) {
+        my_config.line_width -= 5. * time.delta_seconds();
+        my_config.line_width = my_config.line_width.clamp(0., 50.);
+    }
+    if keyboard.just_pressed(KeyCode::Digit2) {
+        my_config.enabled ^= true;
+    }
+
+    if keyboard.just_pressed(KeyCode::KeyA) {
+        config_store.config_mut::<AabbGizmoConfigGroup>().1.draw_all ^= true;
+    }
 }
